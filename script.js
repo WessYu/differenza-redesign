@@ -10,6 +10,35 @@ const successState = $("#successState");
 const formStatus = $("#formStatus");
 const isGitHubPages = location.hostname.endsWith("github.io");
 
+const applyBrandLogo = () => {
+  const style = document.createElement("style");
+  style.textContent = `
+    .logo { gap: 14px; }
+    .logo-symbol {
+      width: 52px !important;
+      height: 52px !important;
+      border: 0 !important;
+      background: center / contain no-repeat url("assets/logo-mark.png") !important;
+      color: transparent !important;
+      font-size: 0 !important;
+      transform: none !important;
+    }
+    .logo-symbol::first-letter { transform: none !important; }
+    .logo strong { font-size: 18px !important; letter-spacing: .18em; }
+    .logo small { font-size: 8px !important; letter-spacing: .28em; }
+    .footer .logo-symbol { width: 48px !important; height: 48px !important; }
+    @media (max-width: 720px) {
+      .logo { gap: 10px; }
+      .logo-symbol { width: 42px !important; height: 42px !important; }
+      .logo strong { font-size: 14px !important; }
+      .logo small { font-size: 7px !important; letter-spacing: .2em; }
+    }
+  `;
+  document.head.appendChild(style);
+  $$(".logo strong").forEach((item) => { item.textContent = "DIFFERENZA"; });
+  $$(".logo small").forEach((item) => { item.textContent = "SALÃO E BARBEARIA"; });
+};
+
 const setMinDate = () => {
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
@@ -36,6 +65,8 @@ const showSuccess = (payload, protocol) => {
   $("#whatsappConfirm").href = `https://wa.me/5554981176888?text=${createWhatsAppMessage(payload, protocol)}`;
   bookingForm.reset();
 };
+
+applyBrandLogo();
 
 window.addEventListener("scroll", () => header.classList.toggle("scrolled", window.scrollY > 120), { passive: true });
 
