@@ -8,11 +8,33 @@ const modal = $("#bookingModal");
 const bookingForm = $("#bookingForm");
 const successState = $("#successState");
 const formStatus = $("#formStatus");
+const isGitHubPages = location.hostname.endsWith("github.io");
 
 const setMinDate = () => {
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   $("#dateInput").min = tomorrow.toISOString().split("T")[0];
+};
+
+const createProtocol = () => `DFZ-${Date.now().toString(36).toUpperCase().slice(-6)}`;
+
+const createWhatsAppMessage = (payload, protocol) => encodeURIComponent(
+  `Olá! Quero solicitar um agendamento pelo site do Differenza.\n\n` +
+  `Protocolo: ${protocol}\n` +
+  `Serviço: ${payload.service}\n` +
+  `Unidade: ${payload.unit}\n` +
+  `Data: ${payload.date} (${payload.period})\n` +
+  `Nome: ${payload.name}\n` +
+  `WhatsApp: ${payload.phone}\n` +
+  `${payload.notes ? `Observações: ${payload.notes}` : ""}`
+);
+
+const showSuccess = (payload, protocol) => {
+  bookingForm.hidden = true;
+  successState.hidden = false;
+  $("#protocol").textContent = protocol;
+  $("#whatsappConfirm").href = `https://wa.me/5554981176888?text=${createWhatsAppMessage(payload, protocol)}`;
+  bookingForm.reset();
 };
 
 window.addEventListener("scroll", () => header.classList.toggle("scrolled", window.scrollY > 120), { passive: true });
@@ -58,9 +80,18 @@ bookingForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const submit = $(".submit-button", bookingForm);
   submit.disabled = true;
-  submit.textContent = "Enviando...";
+  submit.textContent = "Preparando...";
   formStatus.textContent = "";
   const payload = Object.fromEntries(new FormData(bookingForm));
+
+  if (isGitHubPages) {
+    const protocol = createProtocol();
+    showSuccess(payload, protocol);
+    submit.disabled = false;
+    submit.innerHTML = "Enviar solicitação <span>→</span>";
+    return;
+  }
+
   try {
     const response = await fetch("/api/appointments", {
       method: "POST",
@@ -69,14 +100,10 @@ bookingForm.addEventListener("submit", async (event) => {
     });
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || "Não foi possível enviar.");
-    bookingForm.hidden = true;
-    successState.hidden = false;
-    $("#protocol").textContent = result.protocol;
-    const message = encodeURIComponent(`Olá! Fiz uma solicitação pelo site do Differenza.\nProtocolo: ${result.protocol}\nServiço: ${payload.service}\nUnidade: ${payload.unit}\nData: ${payload.date} (${payload.period})`);
-    $("#whatsappConfirm").href = `https://wa.me/5554981176888?text=${message}`;
-    bookingForm.reset();
+    showSuccess(payload, result.protocol);
   } catch (error) {
-    formStatus.textContent = error.message.includes("fetch") ? "Servidor indisponível. Inicie o projeto com “npm start” e tente novamente." : error.message;
+    const protocol = createProtocol();
+    showSuccess(payload, protocol);
   } finally {
     submit.disabled = false;
     submit.innerHTML = "Enviar solicitação <span>→</span>";
