@@ -6,9 +6,38 @@ const empty = document.querySelector("#empty");
 let appointments = [];
 let activeFilter = "Todos";
 
+const applyAdminBrandLogo = () => {
+  const style = document.createElement("style");
+  style.textContent = `
+    .admin-logo { gap: 14px; }
+    .admin-logo b {
+      width: 56px !important;
+      height: 56px !important;
+      border: 0 !important;
+      background: center / contain no-repeat url("assets/logo-mark.png") !important;
+      color: transparent !important;
+      font-size: 0 !important;
+    }
+    .admin-logo span { font-size: 14px !important; letter-spacing: .18em; }
+    .admin-logo small { font-size: 7px !important; letter-spacing: .26em; }
+    @media (max-width: 850px) {
+      .admin-logo b { width: 46px !important; height: 46px !important; }
+    }
+  `;
+  document.head.appendChild(style);
+  const brandText = document.querySelector(".admin-logo span");
+  if (brandText) {
+    brandText.childNodes[0].nodeValue = "DIFFERENZA";
+    const small = brandText.querySelector("small");
+    if (small) small.textContent = "SALÃO E BARBEARIA";
+  }
+};
+
 const token = () => sessionStorage.getItem("differenza_admin_token") || "";
 const formatDate = (value) => new Intl.DateTimeFormat("pt-BR", { dateStyle: "short" }).format(new Date(`${value}T12:00:00`));
 const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[char]));
+
+applyAdminBrandLogo();
 
 function render() {
   document.querySelector("#pendingCount").textContent = appointments.filter((item) => item.status === "Pendente").length;
