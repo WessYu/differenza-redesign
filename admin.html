@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Agenda | Differenza</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <aside>
+    <a href="/" class="admin-logo"><b>D</b><span>DIFFERENZA<small>GESTÃO DE AGENDA</small></span></a>
+    <nav><button class="active">Visão geral</button><a href="/" target="_blank">Ver site ↗</a></nav>
+    <div class="aside-note"><span>●</span><p><strong>Sistema online</strong><br>Solicitações sincronizadas</p></div>
+  </aside>
+  <main>
+    <header><div><p>PAINEL ADMINISTRATIVO</p><h1>Agenda Differenza</h1></div><button id="logout">Sair</button></header>
+    <section class="login-card" id="loginCard">
+      <p>ACESSO PROTEGIDO</p><h2>Entre com o token<br>do servidor.</h2>
+      <form id="loginForm"><label>Token administrativo<input type="password" id="token" required autocomplete="current-password" placeholder="Cole o token exibido ao iniciar o servidor"></label><button>Entrar no painel →</button><span id="loginError"></span></form>
+    </section>
+    <div id="dashboard" hidden>
+      <section class="metrics">
+        <article><span>PENDENTES</span><strong id="pendingCount">0</strong><small>aguardando confirmação</small></article>
+        <article><span>CONFIRMADOS</span><strong id="confirmedCount">0</strong><small>na agenda</small></article>
+        <article><span>TOTAL</span><strong id="totalCount">0</strong><small>solicitações recebidas</small></article>
+      </section>
+      <section class="toolbar"><div><button class="filter active" data-status="Todos">Todos</button><button class="filter" data-status="Pendente">Pendentes</button><button class="filter" data-status="Confirmado">Confirmados</button></div><button id="refresh">Atualizar ↻</button></section>
+      <section class="appointment-list" id="appointmentList"></section>
+      <p class="empty" id="empty" hidden>Nenhuma solicitação encontrada.</p>
+    </div>
+  </main>
+  <script src="admin.js"></script>
+</body>
+</html>
